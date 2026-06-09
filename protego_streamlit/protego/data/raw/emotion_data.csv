@@ -1,0 +1,109 @@
+text,emotion
+"I feel very sad and lonely",sadness
+"I feel hopeless about my life",sadness
+"I cry every day",sadness
+"I feel empty and tired emotionally",sadness
+"I have lost interest in everything",sadness
+"I feel depressed and weak",sadness
+"I feel like no one understands me",sadness
+"I feel emotionally exhausted",sadness
+"I feel broken inside",sadness
+"I feel helpless and alone",sadness
+
+"I am scared of him",fear
+"I feel unsafe in my own house",fear
+"I am afraid he will hurt me",fear
+"My heart races when he comes near me",fear
+"I panic when I hear his voice",fear
+"I feel terrified at night",fear
+"I am constantly anxious around him",fear
+"I am afraid something bad will happen",fear
+"I feel danger around me",fear
+"I am scared for my life",fear
+
+"I feel angry about how he treats me",anger
+"He makes me very angry",anger
+"I feel rage inside me",anger
+"I am frustrated and angry",anger
+"I want to scream because of anger",anger
+"I feel furious when he insults me",anger
+"I feel aggressive sometimes",anger
+"I feel anger building up",anger
+"I get angry thinking about him",anger
+"I feel angry and hurt",anger
+
+"I feel ashamed to talk about this",shame
+"I blame myself for everything",shame
+"I feel guilty for what happened",shame
+"I feel embarrassed about my situation",shame
+"I feel ashamed of myself",shame
+"I feel like it is my fault",shame
+"I feel humiliated",shame
+"I feel dirty and ashamed",shame
+"I feel responsible for his behavior",shame
+"I feel weak and ashamed",shame
+
+"I feel okay today",neutral
+"I am calm right now",neutral
+"I feel normal at the moment",neutral
+"I am not feeling anything special",neutral
+"I feel fine for now",neutral
+"I am stable emotionally today",neutral
+"I feel relaxed at this moment",neutral
+"I am just thinking quietly",neutral
+"I feel balanced right now",neutral
+"I am okay and safe currently",neutral
+"I feel very tired and emotionally drained",sadness
+"I wake up feeling heavy every day",sadness
+"I feel like crying for no reason",sadness
+"I feel numb and empty inside",sadness
+"I feel alone even when people are around",sadness
+"I have no energy to talk to anyone",sadness
+"I feel mentally exhausted all the time",sadness
+"I feel sad without knowing why",sadness
+"I feel emotionally weak today",sadness
+"I feel like I have lost myself",sadness
+
+"I feel nervous whenever he enters the room",fear
+"I am afraid to speak my mind",fear
+"I feel scared to go back home",fear
+"I feel unsafe when I am alone with him",fear
+"My body freezes when he gets angry",fear
+"I feel panic in my chest",fear
+"I feel threatened by his behavior",fear
+"I fear something terrible might happen",fear
+"I feel constant fear around him",fear
+"I feel trapped and scared",fear
+
+"I feel irritated all the time",anger
+"I feel angry when I remember what he said",anger
+"I feel like shouting in frustration",anger
+"I feel mad at how unfair this is",anger
+"I feel anger mixed with pain",anger
+"I feel furious inside but stay silent",anger
+"I feel rage building up in me",anger
+"I feel angry and powerless",anger
+"I feel upset and angry together",anger
+"I feel intense anger sometimes",anger
+
+"I feel embarrassed to share my story",shame
+"I feel ashamed asking for help",shame
+"I feel guilty even though I did nothing wrong",shame
+"I feel like I deserve this",shame
+"I feel small and ashamed",shame
+"I feel humiliated by his words",shame
+"I feel guilty for speaking out",shame
+"I feel ashamed in front of my family",shame
+"I feel like a burden to others",shame
+"I feel ashamed of my weakness",shame
+
+"I feel peaceful right now",neutral
+"I am calm and breathing normally",neutral
+"I feel emotionally steady",neutral
+"I am not stressed at the moment",neutral
+"I feel okay and relaxed",neutral
+"I feel normal today",neutral
+"I am feeling stable right now",neutral
+"I am just observing my thoughts",neutral
+"I feel emotionally neutral",neutral
+"I feel safe at this moment",neutral
