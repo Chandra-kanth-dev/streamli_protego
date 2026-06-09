@@ -35,6 +35,14 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 
+/* ─── Force main area to white so chat bg contrasts properly ─── */
+[data-testid="stMain"] {
+    background: #ffffff !important;
+}
+[data-testid="stMain"] > div:first-child {
+    background: #ffffff !important;
+}
+
 /* ─── Sidebar ─── */
 section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
@@ -106,7 +114,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
 
 .bubble-user {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: #ffffff !important;
     padding: 12px 18px;
     border-radius: 20px 20px 4px 20px;
     max-width: 72%;
@@ -117,8 +125,8 @@ section[data-testid="stSidebar"] .stButton > button:hover {
 
 /* FIX: Remove border-radius when using border-left accent to avoid broken rounded corners */
 .bubble-bot {
-    background: white;
-    color: #1a1a2e;
+    background: #ffffff !important;
+    color: #1a1a2e !important;
     padding: 14px 18px;
     border-radius: 0 20px 20px 20px;
     max-width: 76%;
@@ -128,6 +136,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     white-space: pre-wrap;
     border-left: 4px solid #10b981;
 }
+.bubble-bot * { color: inherit; }
 .bubble-bot.risk-medium { border-left-color: #f59e0b; }
 .bubble-bot.risk-high   { border-left-color: #ef4444; }
 .bubble-bot.risk-emergency {
@@ -312,6 +321,32 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     transition: all 0.2s !important;
 }
 
+/* ─── Form: remove Streamlit's default form border/bg ─── */
+[data-testid="stForm"] {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* ─── Form submit button (send button) ─── */
+[data-testid="stFormSubmitButton"] > button {
+    border-radius: 10px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: white !important;
+    border: none !important;
+    width: 100% !important;
+    height: 46px !important;
+    transition: all 0.2s !important;
+    padding: 0 !important;
+}
+[data-testid="stFormSubmitButton"] > button:hover {
+    opacity: 0.88 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 16px rgba(102,126,234,0.45) !important;
+}
+
 /* ─── Progress bar override ─── */
 .stProgress > div > div { border-radius: 4px !important; }
 
@@ -467,45 +502,49 @@ def render_bubble_bot(turn):
     tag_sentiment = f'<span class="tag tag-sentiment">💬 {sentiment}</span>'
     tag_score     = f'<span class="tag tag-score">⚡ {score_display}</span>'
 
-    st.markdown(f"""
-    <div class="bubble-wrap-bot">
-      <div style="max-width:78%;">
-        <div class="bubble-bot risk-{risk}">
-          <div style="white-space:pre-wrap;">{reply_html}</div>
-          <div class="tag-row">
-            {tag_risk}
-            {tag_emotion}
-            {tag_sentiment}
-            {tag_score}
-          </div>
-        </div>
-        <div class="ts">{turn['ts']}</div>
-      </div>
-    </div>""", unsafe_allow_html=True)
+    # Build bot bubble as compact single string — same reason as emergency contacts:
+    # leading whitespace > 3 spaces triggers markdown code-block rendering.
+    ts = turn["ts"]
+    bubble_html = (
+        f'<div class="bubble-wrap-bot">'
+        f'<div style="max-width:78%;">'
+        f'<div class="bubble-bot risk-{risk}">'
+        f'<div style="white-space:pre-wrap;color:#1a1a2e;">{reply_html}</div>'
+        f'<div class="tag-row">{tag_risk}{tag_emotion}{tag_sentiment}{tag_score}</div>'
+        f'</div>'
+        f'<div class="ts">{ts}</div>'
+        f'</div>'
+        f'</div>'
+    )
+    st.markdown(bubble_html, unsafe_allow_html=True)
 
-    # ── Emergency contacts rendered SEPARATELY below the bubble (not nested inside it)
+    # ── Emergency contacts: build as ONE compact string.
+    # Multi-line f-strings with 4+ spaces of leading indent are treated
+    # as code blocks by Streamlit's markdown parser — that is why raw HTML
+    # was appearing. Keeping everything on a single logical line fixes it.
     if turn.get("show_emergency") and turn.get("emergency_contacts"):
         contacts = turn["emergency_contacts"]
-        contact_rows_html = ""
+        rows = ""
         for key, info in contacts.items():
-            label = key.replace("_", " ").title()
-            number      = str(info.get("number", ""))
-            description = str(info.get("description", ""))
-            available   = str(info.get("available", ""))
-            contact_rows_html += f"""
-            <div class="contact-row">
-              <div class="contact-num">{number}</div>
-              <div>
-                <div class="contact-label">{label}</div>
-                <div class="contact-desc">{description} · {available}</div>
-              </div>
-            </div>"""
-
-        st.markdown(f"""
-        <div class="emergency-panel">
-          <div class="emergency-panel-title">🆘 Emergency Contacts — {st.session_state.country}</div>
-          {contact_rows_html}
-        </div>""", unsafe_allow_html=True)
+            lbl  = key.replace("_", " ").title()
+            num  = str(info.get("number", ""))
+            desc = str(info.get("description", ""))
+            avail = str(info.get("available", ""))
+            rows += (
+                f'<div class="contact-row">'
+                f'<div class="contact-num">{num}</div>'
+                f'<div><div class="contact-label">{lbl}</div>'
+                f'<div class="contact-desc">{desc} · {avail}</div></div>'
+                f'</div>'
+            )
+        country = st.session_state.country
+        html = (
+            f'<div class="emergency-panel">'
+            f'<div class="emergency-panel-title">🆘 Emergency Contacts — {country}</div>'
+            f'{rows}'
+            f'</div>'
+        )
+        st.markdown(html, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────
 # PAGE: CHAT
@@ -518,41 +557,46 @@ def page_chat():
     </div>""", unsafe_allow_html=True)
 
     chat_col, panel_col = st.columns([3, 1])
+    st.markdown("<div style='padding:20px 28px;'>", unsafe_allow_html=True)
 
     with chat_col:
         # ── Chat message area
         if not st.session_state.messages:
             st.markdown("""
-            <div style="background:#f8f9ff;display:flex;flex-direction:column;
-                        align-items:center;justify-content:center;color:#9ca3af;
-                        padding:80px 24px;text-align:center;">
-              <div style="font-size:52px;margin-bottom:12px;">🛡️</div>
-              <div style="font-weight:700;font-size:16px;color:#6b7280;">PROTEGO is here</div>
-              <div style="font-size:13px;margin-top:6px;max-width:280px;line-height:1.6;color:#9ca3af;">
+            <div style="background:#ffffff;border:1px solid #e8eaf6;border-radius:12px;
+                        display:flex;flex-direction:column;
+                        align-items:center;justify-content:center;
+                        padding:80px 24px;text-align:center;margin-bottom:8px;">
+              <div style="font-size:52px;margin-bottom:14px;">🛡️</div>
+              <div style="font-weight:700;font-size:16px;color:#374151;">PROTEGO is here</div>
+              <div style="font-size:13px;margin-top:8px;max-width:300px;line-height:1.7;color:#9ca3af;">
                 Tell me how you're feeling.<br>Everything is confidential and I'm not here to judge.
               </div>
               <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-                <span style="background:#ede9fe;color:#5b21b6;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;">I feel scared</span>
-                <span style="background:#ede9fe;color:#5b21b6;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;">I need help</span>
-                <span style="background:#ede9fe;color:#5b21b6;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;">I feel hopeless</span>
+                <span style="background:#ede9fe;color:#5b21b6;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;">I feel scared</span>
+                <span style="background:#ede9fe;color:#5b21b6;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;">I need help</span>
+                <span style="background:#ede9fe;color:#5b21b6;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;">I feel hopeless</span>
               </div>
             </div>""", unsafe_allow_html=True)
         else:
-            # Render all turns — Streamlit natively scrolls, so we use a styled wrapper
+            # White card container — Streamlit's own page scroll handles overflow
             st.markdown('<div class="chat-container">', unsafe_allow_html=True)
             for turn in st.session_state.messages:
                 render_bubble_user(turn["user"], turn["ts"])
                 render_bubble_bot(turn)
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Input form
-        st.markdown("<div style='padding:12px 0 4px;'>", unsafe_allow_html=True)
+        # ── Input form — white card so it sits cleanly above the page
+        st.markdown("""
+        <div style="background:#ffffff;border:1px solid #e8eaf6;border-radius:12px;
+                    padding:12px 16px;margin-top:4px;">
+        """, unsafe_allow_html=True)
         with st.form(key=f"cf_{st.session_state.input_key}", clear_on_submit=True):
             c1, c2 = st.columns([9, 1])
             with c1:
                 user_input = st.text_input(
                     "msg",
-                    placeholder="Type your message…",
+                    placeholder="Type your message here…",
                     label_visibility="collapsed",
                 )
             with c2:
@@ -560,8 +604,8 @@ def page_chat():
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("""
-        <div style="text-align:center;font-size:10px;color:#c4c4c4;padding:2px 0 8px;">
-          PROTEGO is an AI tool. Always contact emergency services if you are in immediate danger.
+        <div style="text-align:center;font-size:11px;color:#b0b8d1;padding:8px 0 4px;">
+          PROTEGO is an AI tool — always call emergency services if you are in immediate danger.
         </div>""", unsafe_allow_html=True)
 
     # ── Right panel
