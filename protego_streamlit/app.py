@@ -265,34 +265,51 @@ section[data-testid="stSidebar"] .stButton > button:hover {
 
 /* ─── Chat container background ─── */
 .chat-container {
-    background: #f8f9ff;
-    padding: 16px 20px;
-    min-height: 480px;
-    border-radius: 0;
+    background: #f4f5fb;
+    padding: 20px 24px;
+    min-height: 460px;
+    border-radius: 12px;
+    border: 1px solid #e8eaf6;
+    margin-bottom: 8px;
+}
+
+/* ─── Main area (non-sidebar) send button ─── */
+[data-testid="stMain"] .stButton > button {
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: white !important;
+    border: none !important;
+    height: 46px !important;
+    transition: all 0.2s !important;
+}
+[data-testid="stMain"] .stButton > button:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(102,126,234,0.4) !important;
 }
 
 /* ─── Input bar ─── */
 .stTextInput input {
-    border-radius: 30px !important;
+    border-radius: 12px !important;
     border: 2px solid #e0e7ff !important;
-    padding: 12px 22px !important;
+    padding: 12px 18px !important;
     font-size: 14px !important;
-    background: white !important;
+    background: #ffffff !important;
+    color: #1a1a2e !important;
+    caret-color: #667eea !important;
 }
+.stTextInput input::placeholder { color: #b0b8d1 !important; }
 .stTextInput input:focus {
     border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102,126,234,0.15) !important;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.12) !important;
+    outline: none !important;
 }
 
-/* ─── Global Streamlit button override ─── */
+/* ─── Global Streamlit button base ─── */
 .stButton > button {
-    border-radius: 30px !important;
-    font-weight: 600 !important;
     transition: all 0.2s !important;
-}
-.stButton > button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
 }
 
 /* ─── Progress bar override ─── */
