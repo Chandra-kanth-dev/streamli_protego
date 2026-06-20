@@ -1,0 +1,44 @@
+[
+  {
+    "id": "kb1",
+    "title": "Digital Privacy & Device Security",
+    "category": "Technology Safety",
+    "keywords": ["phone", "location", "device", "history", "spyware", "tracking", "email", "password", "checks my phone", "social media"],
+    "content": "To secure your digital privacy: 1. Turn off location sharing services (GPS) in your phone settings. 2. Clear your browser history regularly, or use incognito/private tabs. 3. Change passwords for emails and banking; use strong, unique passwords not easily guessed. 4. Check for unfamiliar apps that might be tracking software (stalkerware). 5. If safe, use a separate, hidden phone or a public library computer for safety planning."
+  },
+  {
+    "id": "kb2",
+    "title": "Applying for Legal Protection Orders",
+    "category": "Legal Rights",
+    "keywords": ["legal", "court", "lawyer", "police", "restraining order", "protection order", "injunction", "rights", "arrest", "custody"],
+    "content": "A Protection Order (or restraining order) is a legal document issued by a court that orders an abuser to stay away from you. To apply: 1. Go to your local civil court or contact a legal aid society. 2. Gather evidence: screenshots of threats, photos of injuries, police report numbers, and witness contacts. 3. Legal advocates at domestic violence hotlines can guide you through the paperwork for free. If the order is violated, call the police immediately, as this is a criminal offense."
+  },
+  {
+    "id": "kb3",
+    "title": "Grounding Exercises for Panic Attacks",
+    "category": "Emotional Support",
+    "keywords": ["panic", "anxious", "scared", "breath", "shaking", "heart racing", "calm", "anxiety", "breathing", "terrified"],
+    "content": "If you are experiencing a panic attack, try the 5-4-3-2-1 Grounding Method to bring your mind back to the present: \n- 5: Name five things you can see around you.\n- 4: Name four things you can physically touch (e.g. your clothes, the floor).\n- 3: Name three things you can hear.\n- 2: Name two things you can smell.\n- 1: Name one thing you can taste.\nTake slow, deep breaths, inhaling for 4 seconds, holding for 4, and exhaling for 6."
+  },
+  {
+    "id": "kb4",
+    "title": "Accessing Crisis Housing & Shelters",
+    "category": "Emergency Resources",
+    "keywords": ["shelter", "housing", "leave", "escape", "stay", "place", "home", "sleep", "safehouse", "somewhere to go"],
+    "content": "If you need a safe place to stay immediately: 1. Contact a domestic violence hotline (like 181 in India, or 1-800-799-7233 in the US). They maintain directories of confidential shelters (safehouses) that accept survivors and their children. 2. Safehouses provide free housing, meals, legal counseling, and support groups. 3. If shelters are full, emergency services can sometimes arrange temporary hotel stays. Do not hesitate to call them."
+  },
+  {
+    "id": "kb5",
+    "title": "Documenting Incidents & Evidence Preservation",
+    "category": "Safety Planning",
+    "keywords": ["evidence", "proof", "photo", "recording", "text", "message", "screenshot", "injury", "threat", "log", "incident"],
+    "content": "Preserving evidence is vital for legal actions or restraining orders. 1. Take clear photos of injuries with a timestamp/date reference. 2. Keep a written journal detailing dates, times, and descriptions of abusive actions (keep this journal hidden or in a secure email draft). 3. Take screenshots of threatening text messages, emails, call logs, or social media posts. 4. If legal in your area, consider recording threats, but prioritize your safety above getting recordings."
+  },
+  {
+    "id": "kb6",
+    "title": "Talking to Children About Safety Plans",
+    "category": "Family Safety",
+    "keywords": ["children", "kids", "son", "daughter", "family", "school", "baby", "parenting"],
+    "content": "If you have children, include them in safety planning in an age-appropriate way: 1. Teach them how and when to call emergency services (e.g. 911, 100). 2. Practice an escape plan together, instructing them to get to a safe neighbor rather than trying to intervene in a fight. 3. Establish a secret code word that means 'run to safety immediately'. 4. Reassure them that the violence is not their fault and that their only job is to stay safe."
+  }
+]

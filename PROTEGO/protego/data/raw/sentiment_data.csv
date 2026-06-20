@@ -1,0 +1,65 @@
+text,sentiment
+"I feel happy today",positive
+"I feel calm and relaxed",positive
+"I feel safe right now",positive
+"I feel hopeful about the future",positive
+"I feel supported by my friends",positive
+"I feel stronger than before",positive
+"I am feeling better today",positive
+"I feel okay after talking to someone",positive
+"I feel peaceful at the moment",positive
+"I feel confident about myself",positive
+
+"I feel sad",negative
+"I feel very lonely",negative
+"I am feeling depressed",negative
+"I feel hopeless",negative
+"I feel scared",negative
+"I feel anxious all the time",negative
+"I feel unsafe",negative
+"I am afraid of him",negative
+"I feel emotionally exhausted",negative
+"I feel broken inside",negative
+
+"I am just talking",neutral
+"I am thinking about things",neutral
+"I don’t know how I feel",neutral
+"I feel normal today",neutral
+"I am okay",neutral
+"I am not sure what to say",neutral
+"I am calm",neutral
+"I feel nothing special",neutral
+"I am fine for now",neutral
+"I am here to chat",neutral
+"I feel grateful for the support I received",positive
+"I feel hopeful after getting help",positive
+"I feel relaxed after speaking openly",positive
+"I feel lighter emotionally now",positive
+"I feel encouraged to move forward",positive
+"I feel comforted by this conversation",positive
+"I feel reassured that I am not alone",positive
+"I feel proud of myself for speaking up",positive
+"I feel positive about today",positive
+"I feel calm inside right now",positive
+
+"I feel very upset",negative
+"I feel emotionally drained",negative
+"I feel frightened and worried",negative
+"I feel stressed and overwhelmed",negative
+"I feel angry and sad together",negative
+"I feel tired of everything",negative
+"I feel mentally weak",negative
+"I feel trapped and scared",negative
+"I feel hurt emotionally",negative
+"I feel distressed and anxious",negative
+
+"I am just sharing my thoughts",neutral
+"I am talking about my day",neutral
+"I am explaining my situation",neutral
+"I am thinking quietly",neutral
+"I am responding honestly",neutral
+"I am here to understand things",neutral
+"I am just reflecting",neutral
+"I am calm at the moment",neutral
+"I feel emotionally steady",neutral
+"I am okay right now",neutral

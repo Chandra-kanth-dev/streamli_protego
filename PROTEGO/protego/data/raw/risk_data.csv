@@ -1,0 +1,87 @@
+text,risk
+"I feel a little stressed",low
+"I feel lonely these days",low
+"I feel sad but I am managing",low
+"I am feeling emotionally tired",low
+"I feel down sometimes",low
+"I am not very happy lately",low
+"I feel confused about my situation",low
+"I feel weak emotionally",low
+"I feel upset today",low
+"I am trying to stay calm",low
+
+"He shouts at me often",medium
+"I feel scared when he gets angry",medium
+"He controls my phone and messages",medium
+"I feel unsafe around him",medium
+"He insults me every day",medium
+"I feel anxious living with him",medium
+"He threatens me verbally",medium
+"I feel afraid to speak",medium
+"He scares me sometimes",medium
+"I feel mentally abused",medium
+
+"He slapped me yesterday",high
+"He hit me during an argument",high
+"I was physically hurt by him",high
+"He pushed me violently",high
+"I have bruises on my body",high
+"He beat me badly",high
+"I was attacked at home",high
+"He hurt me physically",high
+"I am being physically abused",high
+"I feel pain because of him",high
+
+"He is threatening to kill me",emergency
+"He is attacking me right now",emergency
+"I am in danger right now",emergency
+"He has a knife",emergency
+"There is blood everywhere",emergency
+"I fear for my life",emergency
+"He is trying to strangle me",emergency
+"I need help immediately",emergency
+"My life is in danger",emergency
+"Please help me now",emergency
+"I feel emotionally drained but safe",low
+"I am feeling low but nothing serious",low
+"I feel stressed because of work and life",low
+"I feel tired and overwhelmed",low
+"I feel sad and confused",low
+"I am emotionally struggling but okay",low
+"I feel pressure but I can handle it",low
+"I feel uneasy but not scared",low
+"I feel mentally low today",low
+"I am feeling down but safe",low
+
+"He constantly yells at me",medium
+"He makes me feel scared with his words",medium
+"He checks where I go all the time",medium
+"He controls my daily activities",medium
+"He insults me in front of others",medium
+"I feel emotionally unsafe with him",medium
+"He scares me when he loses his temper",medium
+"I feel threatened by his behavior",medium
+"He makes me feel powerless",medium
+"I feel mentally tortured",medium
+
+"He pushed me hard during a fight",high
+"He threw something at me",high
+"He grabbed me forcefully",high
+"I was hurt physically last night",high
+"He kicked me during an argument",high
+"I have injuries from him",high
+"He locked me in a room and hurt me",high
+"I was beaten and bruised",high
+"He used physical force on me",high
+"I am suffering from physical abuse",high
+
+"He is hurting me right now",emergency
+"He has locked me inside and is attacking me",emergency
+"I am bleeding and need help",emergency
+"He is choking me",emergency
+"I think he might kill me",emergency
+"I am trapped and in danger",emergency
+"He is violent and out of control",emergency
+"I cannot escape right now",emergency
+"Someone please call the police",emergency
+"I need emergency help immediately",emergency

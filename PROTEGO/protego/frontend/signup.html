@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Signup - Protego</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background: linear-gradient(135deg,#1d2671,#c33764);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+}
+.card{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(15px);
+  padding:30px;
+  border-radius:20px;
+  width:350px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card text-center">
+<h2>Create Account</h2>
+
+<input id="name" class="form-control mb-2" placeholder="Name">
+<input id="email" class="form-control mb-2" placeholder="Email">
+<input id="password" type="password" class="form-control mb-3" placeholder="Password">
+
+<button class="btn btn-success w-100" onclick="signup()">Signup</button>
+
+<p class="mt-3"><a href="/login">Back to Login</a></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseClient = supabase.createClient(
+"https://wyaokrorqdnbcwkgjcho.supabase.co",
+"sb_publishable_rdlUtCFXg5bMKQEmHuEPRw_5JBvWXQf"
+);
+
+async function signup(){
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const {error} = await supabaseClient.from("users").insert([{
+    name,email,password,role:"user"
+  }]);
+
+  if(error) alert(error.message);
+  else{
+    alert("Signup successful");
+    window.location="/login";
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PROTEGO AI — Safety Assistant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ink: #0a0a12;
+  --deep: #0d0d1a;
+  --panel: #13131f;
+  --surface: #1a1a2e;
+  --glass: rgba(255,255,255,0.045);
+  --glass-mid: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --border-hi: rgba(255,255,255,0.14);
+
+  --crimson: #e63462;
+  --crimson-glow: rgba(230,52,98,0.35);
+  --crimson-soft: rgba(230,52,98,0.12);
+
+  --gold: #f4b942;
+  --gold-glow: rgba(244,185,66,0.3);
+
+  --teal: #00d4aa;
+  --teal-glow: rgba(0,212,170,0.3);
+
+  --electric: #5b8dee;
+  --electric-glow: rgba(91,141,238,0.3);
+
+  --text: #f0f0f8;
+  --muted: rgba(240,240,248,0.55);
+  --faint: rgba(240,240,248,0.28);
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 36px;
+
+  --shadow-card: 0 24px 60px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-glow-red: 0 0 30px var(--crimson-glow), 0 0 80px rgba(230,52,98,0.12);
+  --shadow-glow-teal: 0 0 30px var(--teal-glow);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* BACKGROUND MESH */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 900px 600px at 10% 15%, rgba(230,52,98,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 85% 80%, rgba(0,212,170,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 400px at 60% 20%, rgba(91,141,238,0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+* { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(230,52,98,0.4); border-radius: 10px; }
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar-protego {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(10,10,18,0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2.5rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-brand .shield-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--crimson), #ff6b9d);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px var(--crimson-glow);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#brand-name {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+
+.btn-logout {
+  background: rgba(230,52,98,0.15);
+  color: var(--crimson);
+  border: 1px solid rgba(230,52,98,0.3);
+  border-radius: var(--radius-sm);
+  padding: 7px 18px;
+  font-size: 0.8rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-logout:hover {
+  background: var(--crimson);
+  color: white;
+  box-shadow: 0 4px 20px var(--crimson-glow);
+}
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════════ */
+.page-wrapper {
+  padding-top: 64px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION UTILITY
+═══════════════════════════════════════════ */
+section { padding: 100px 0; }
+
+.container-wide {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--crimson);
+  background: var(--crimson-soft);
+  border: 1px solid rgba(230,52,98,0.25);
+  border-radius: 100px;
+  padding: 5px 14px;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.section-title span {
+  background: linear-gradient(135deg, var(--crimson), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-sub {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 600px;
+  margin-top: 1rem;
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+#hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-left {}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(0,212,170,0.1);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: 100px;
+  padding: 6px 16px;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s 0.1s both;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.hero-headline {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+  line-height: 1.0;
+  letter-spacing: -1.5px;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s 0.2s both;
+}
+
+.hero-headline .line1 { display: block; }
+
+.hero-headline .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--crimson) 0%, #ff6b9d 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-headline .line3 {
+  display: block;
+  color: var(--muted);
+  font-size: 0.55em;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-top: 0.5rem;
+}
+
+.hero-desc {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.6s 0.3s both;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.4s both;
+}
+
+.btn-hero-primary {
+  background: linear-gradient(135deg, var(--crimson), #c0224a);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px 32px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 30px var(--crimson-glow), 0 2px 8px rgba(0,0,0,0.4);
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px var(--crimson-glow);
+  color: white;
+}
+
+.btn-hero-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-md);
+  padding: 14px 32px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-hero-ghost:hover {
+  background: var(--glass-mid);
+  border-color: rgba(255,255,255,0.25);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  animation: fadeUp 0.6s 0.5s both;
+}
+
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text), var(--muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-stat-label {
+  font-size: 0.75rem;
+  color: var(--faint);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* HERO RIGHT — CHAT */
+.hero-right {
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 0.8s 0.3s both;
+}
+
+/* ═══════════════════════════════════════════
+   CHAT CARD
+═══════════════════════════════════════════ */
+.chat-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--panel);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-card-header {
+  background: linear-gradient(135deg, var(--crimson) 0%, #b5213c 100%);
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-avatar {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.chat-header-info {}
+
+.chat-header-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.chat-header-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 2px;
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  background: #7fffbf;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+#chatBody {
+  height: 380px;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: transparent;
+}
+
+#chatBody::-webkit-scrollbar { width: 4px; }
+#chatBody::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
+
+.message {
+  max-width: 78%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+  animation: msgIn 0.25s ease both;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bot-msg {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.user-msg {
+  background: linear-gradient(135deg, var(--teal), #00b896);
+  color: #001a14;
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+
+.emergency {
+  border: 1.5px solid var(--crimson);
+  background: rgba(230,52,98,0.15);
+  box-shadow: 0 0 20px rgba(230,52,98,0.3);
+}
+
+.chat-card-footer {
+  padding: 14px 18px 18px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+}
+
+#userInput {
+  width: 100%;
+  background: var(--glass-mid);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  padding: 11px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#userInput::placeholder { color: var(--faint); }
+
+#userInput:focus {
+  border-color: rgba(0,212,170,0.5);
+  box-shadow: 0 0 0 3px rgba(0,212,170,0.12);
+}
+
+.chat-send-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--crimson), #c0224a);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 15px var(--crimson-glow);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.chat-send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--crimson-glow);
+}
+
+/* ═══════════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════════ */
+#features { background: var(--deep); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+}
+
+.feature-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.feature-card:hover {
+  background: var(--glass-mid);
+  border-color: var(--border-hi);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card);
+}
+
+.feature-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.4rem;
+}
+
+.icon-red { background: rgba(230,52,98,0.15); border: 1px solid rgba(230,52,98,0.2); }
+.icon-teal { background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.2); }
+.icon-blue { background: rgba(91,141,238,0.12); border: 1px solid rgba(91,141,238,0.2); }
+.icon-gold { background: rgba(244,185,66,0.12); border: 1px solid rgba(244,185,66,0.2); }
+.icon-purple { background: rgba(160,110,255,0.12); border: 1px solid rgba(160,110,255,0.2); }
+.icon-pink { background: rgba(255,110,180,0.12); border: 1px solid rgba(255,110,180,0.2); }
+
+.feature-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.7rem;
+  color: var(--text);
+}
+
+.feature-desc {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════
+   EMERGENCY SECTION
+═══════════════════════════════════════════ */
+#emergency {
+  background: var(--ink);
+}
+
+.emergency-hero-banner {
+  background: linear-gradient(135deg, rgba(230,52,98,0.18) 0%, rgba(180,20,60,0.08) 100%);
+  border: 1px solid rgba(230,52,98,0.25);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 3rem;
+  margin-bottom: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.emergency-banner-text {}
+
+.emergency-banner-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.emergency-banner-title span { color: var(--crimson); }
+
+.emergency-banner-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.emergency-quick-btns {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  background: rgba(230,52,98,0.2);
+  color: var(--crimson);
+  border: 1.5px solid rgba(230,52,98,0.4);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: all 0.25s;
+}
+
+.quick-btn:hover {
+  background: var(--crimson);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--crimson-glow);
+}
+
+/* WHAT TO DO STEPS */
+.what-to-do {
+  margin-bottom: 4rem;
+}
+
+.steps-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.steps-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.step-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  transition: all 0.25s;
+}
+
+.step-card:hover {
+  border-color: rgba(230,52,98,0.3);
+  background: rgba(230,52,98,0.05);
+  transform: translateX(4px);
+}
+
+.step-num {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--crimson);
+  opacity: 0.4;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 40px;
+}
+
+.step-body {}
+
+.step-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.step-desc {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* COUNTRY CONTACTS */
+.country-filter {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.filter-btn {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background: var(--crimson-soft);
+  border-color: rgba(230,52,98,0.4);
+  color: var(--text);
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+.country-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.country-card:hover {
+  border-color: rgba(230,52,98,0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  transform: translateY(-4px);
+}
+
+.country-header {
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass);
+}
+
+.country-flag {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.country-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.country-region {
+  font-size: 0.72rem;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.country-body {
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.contact-label {
+  font-size: 0.76rem;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  flex-shrink: 0;
+}
+
+.contact-number {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: right;
+}
+
+.contact-number a {
+  color: var(--teal);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-number a:hover { color: var(--text); }
+
+.contact-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.3rem 0;
+}
+
+.country-hotline {
+  margin-top: 0.8rem;
+  padding: 10px 14px;
+  background: var(--crimson-soft);
+  border: 1px solid rgba(230,52,98,0.2);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.hotline-label {
+  font-size: 0.72rem;
+  color: rgba(230,52,98,0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hotline-number {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--crimson);
+  text-shadow: 0 0 20px var(--crimson-glow);
+}
+
+.hotline-number a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════ */
+#how-it-works {
+  background: var(--deep);
+}
+
+.timeline {
+  position: relative;
+  margin-top: 3.5rem;
+  padding-left: 3rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--crimson), var(--electric), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2.75rem;
+  top: 0.35rem;
+  width: 28px; height: 28px;
+  background: var(--surface);
+  border: 2px solid var(--crimson);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--crimson);
+  box-shadow: 0 0 12px var(--crimson-glow);
+}
+
+.timeline-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.timeline-desc {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  background: var(--deep);
+  border-top: 1px solid var(--border);
+  padding: 3rem 0 2rem;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.footer-brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.footer-brand-tagline {
+  font-size: 0.8rem;
+  color: var(--faint);
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+.footer-col-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--faint);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--text); }
+
+.footer-bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--faint);
+}
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--faint);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 14px;
+}
+
+/* ═══════════════════════════════════════════
+   EMERGENCY POPUP
+═══════════════════════════════════════════ */
+.emergency-toast {
+  position: fixed;
+  top: 80px; right: 24px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #2a0a12, #1a0610);
+  border: 1.5px solid var(--crimson);
+  border-radius: var(--radius-md);
+  padding: 16px 22px;
+  box-shadow: 0 12px 40px rgba(230,52,98,0.5), 0 0 60px rgba(230,52,98,0.15);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: slideIn 0.4s ease both;
+  max-width: 320px;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-icon { font-size: 1.8rem; flex-shrink: 0; }
+
+.toast-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--crimson);
+  letter-spacing: 0.5px;
+}
+
+.toast-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* FLOAT BUTTON */
+.float-chat-btn {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  z-index: 500;
+  width: 58px; height: 58px;
+  background: linear-gradient(135deg, var(--crimson), #b5213c);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 8px 25px var(--crimson-glow);
+  transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.float-chat-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 12px 35px var(--crimson-glow);
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .countries-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .countries-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .emergency-hero-banner { flex-direction: column; }
+  .footer-inner { flex-direction: column; gap: 2rem; }
+  .hero-stats { gap: 1.5rem; }
+  .container-wide { padding: 0 1.2rem; }
+  section { padding: 60px 0; }
+  .hero-right-mobile { display: flex !important; margin-top: 2rem; }
+}
+
+/* Mobile chat */
+.hero-right-mobile {
+  display: none;
+  justify-content: center;
+  width: 100%;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<nav class="navbar-protego">
+  <a href="#" class="nav-brand">
+    <div class="shield-icon">🛡️</div>
+    PROTEGO
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#emergency">Emergency Help</a></li>
+    <li><a href="#how-it-works">How it Works</a></li>
+  </ul>
+  <div class="nav-right">
+    <span id="brand-name"></span>
+    <button class="btn-logout" onclick="logout()">LOGOUT</button>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section id="hero">
+  <div class="container-wide">
+    <div class="hero-inner">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">AI-Powered Domestic Violence Prevention</div>
+
+        <h1 class="hero-headline">
+          <span class="line1">You Are</span>
+          <span class="line2">Not Alone.</span>
+          <span class="line3">Real-time AI safety assistant — available 24/7</span>
+        </h1>
+
+        <p class="hero-desc">
+          PROTEGO uses advanced NLP and risk-detection AI to provide immediate emotional support, assess danger levels, and connect you with the right emergency resources — instantly and confidentially.
+        </p>
+
+        <div class="hero-cta">
+          <button class="btn-hero-primary" onclick="scrollToChat()">
+            🤍 Talk to PROTEGO AI
+          </button>
+          <a href="#emergency" class="btn-hero-ghost">
+            🆘 Emergency Contacts
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">24/7</div>
+            <div class="hero-stat-label">Available</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">150+</div>
+            <div class="hero-stat-label">Countries</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">100%</div>
+            <div class="hero-stat-label">Confidential</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Chat card (desktop) -->
+      <div class="hero-right">
+        <div class="chat-card" id="mainChatCard">
+          <div class="chat-card-header">
+            <div class="chat-avatar">🛡️</div>
+            <div class="chat-header-info">
+              <div class="chat-header-name">PROTEGO AI</div>
+              <div class="chat-header-status">
+                <div class="status-dot"></div>
+                Online & Confidential
+              </div>
+            </div>
+          </div>
+          <div id="chatBody">
+            <div class="message bot-msg">Hello 🤍 I'm here for you. Whatever you're going through, you don't have to face it alone. How can I help you today?</div>
+          </div>
+          <div class="chat-card-footer">
+            <input id="userInput" type="text" placeholder="Type your message here..." autocomplete="off">
+            <button class="chat-send-btn" onclick="sendMessage()">
+              SEND MESSAGE →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile: show chat below -->
+      <div class="hero-right-mobile">
+        <div style="width:100%; max-width:420px;">
+          <div class="chat-card">
+            <div class="chat-card-header">
+              <div class="chat-avatar">🛡️</div>
+              <div class="chat-header-info">
+                <div class="chat-header-name">PROTEGO AI</div>
+                <div class="chat-header-status">
+                  <div class="status-dot"></div>
+                  Online & Confidential
+                </div>
+              </div>
+            </div>
+            <div id="chatBodyMobile" style="height:320px; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px;">
+              <div class="message bot-msg">Hello 🤍 I'm here for you.</div>
+            </div>
+            <div class="chat-card-footer">
+              <input id="userInputMobile" type="text" placeholder="Type your message..." autocomplete="off">
+              <button class="chat-send-btn" onclick="sendMessageMobile()">SEND →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FEATURES ═══════════════════ -->
+<section id="features">
+  <div class="container-wide">
+    <div class="section-tag">✦ CAPABILITIES</div>
+    <h2 class="section-title">Built to <span>Protect</span> at Every Level</h2>
+    <p class="section-sub">PROTEGO combines machine learning, natural language understanding, and real-time risk analysis to keep you safer.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-red">🧠</div>
+        <div class="feature-title">Real-Time Risk Detection</div>
+        <div class="feature-desc">ML models analyze message patterns to detect emotional distress, escalating danger, and emergency situations instantly — and respond with appropriate urgency.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-teal">💬</div>
+        <div class="feature-title">Empathetic AI Chat</div>
+        <div class="feature-desc">Trained on trauma-informed communication principles, PROTEGO listens without judgment and responds with compassion, validating your experience at every step.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-blue">🌍</div>
+        <div class="feature-title">Country-Wise Resources</div>
+        <div class="feature-desc">Automatically surfaces the correct local emergency numbers, hotlines, shelters, and legal resources based on your country — no searching required.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-gold">🔒</div>
+        <div class="feature-title">Fully Confidential</div>
+        <div class="feature-desc">End-to-end privacy. No personal data is shared with third parties. You can delete your conversation history at any time. Your safety is our priority.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-purple">⚡</div>
+        <div class="feature-title">Instant Emergency Alert</div>
+        <div class="feature-desc">When high-risk or emergency language is detected, PROTEGO triggers immediate alerts with step-by-step guidance and direct links to emergency services.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-pink">📊</div>
+        <div class="feature-title">Safety Plan Builder</div>
+        <div class="feature-desc">Helps you create a personalized safety plan — what to do, who to call, where to go — stored securely and accessible whenever you need it most.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ EMERGENCY ═══════════════════ -->
+<section id="emergency">
+  <div class="container-wide">
+    <div class="section-tag">🆘 EMERGENCY RESOURCES</div>
+    <h2 class="section-title">Get Help <span>Right Now</span></h2>
+    <p class="section-sub">Every second matters. Find emergency contacts and step-by-step guidance for your country below.</p>
+
+    <!-- EMERGENCY BANNER -->
+    <div class="emergency-hero-banner" style="margin-top:2.5rem;">
+      <div class="emergency-banner-text">
+        <div class="emergency-banner-title">🚨 In <span>Immediate Danger?</span></div>
+        <div class="emergency-banner-sub">Call your local emergency number immediately. If it's safe to do so, get out of the situation first. Your life matters above everything else.</div>
+      </div>
+      <div class="emergency-quick-btns">
+        <a href="tel:911" class="quick-btn">📞 Call 911 (US)</a>
+        <a href="tel:112" class="quick-btn">📞 Call 112 (EU)</a>
+        <a href="tel:100" class="quick-btn">📞 Call 100 (India)</a>
+        <a href="tel:999" class="quick-btn">📞 Call 999 (UK)</a>
+      </div>
+    </div>
+
+    <!-- WHAT TO DO -->
+    <div class="what-to-do">
+      <div class="steps-title">📋 What To Do In An Emergency Situation</div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <div class="step-title">Get to Safety First</div>
+            <div class="step-desc">If possible, leave the location. Go to a neighbor, public place, or trusted friend. Don't stop to collect belongings — your safety is the priority.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <div class="step-title">Call Emergency Services</div>
+            <div class="step-desc">Dial your local emergency number (911, 999, 112, 100, etc.). If you can't speak, stay on the line — operators are trained to help silent callers.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <div class="step-title">Contact a Trusted Person</div>
+            <div class="step-desc">Reach out to a trusted friend, family member, or neighbor who can help you. Have a code word pre-arranged so they know to call for help without asking questions.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <div class="step-title">Seek Medical Attention</div>
+            <div class="step-desc">Even if injuries seem minor, get evaluated at a hospital or clinic. Medical records may be important for any legal proceedings later.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">05</div>
+          <div class="step-body">
+            <div class="step-title">Preserve Evidence</div>
+            <div class="step-desc">If safe, document injuries with photos. Save threatening messages or emails. Keep a written record with dates and descriptions for police or legal use.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">06</div>
+          <div class="step-body">
+            <div class="step-title">Contact a DV Hotline</div>
+            <div class="step-desc">Domestic violence hotlines offer free, confidential support 24/7. They can help with safety planning, legal options, shelter, and counseling referrals.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">07</div>
+          <div class="step-body">
+            <div class="step-title">Create a Safety Plan</div>
+            <div class="step-desc">Work with a counselor to prepare for future incidents: identify safe exits, pack an emergency bag, arrange where to go, and who to contact.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">08</div>
+          <div class="step-body">
+            <div class="step-title">Know Your Legal Rights</div>
+            <div class="step-desc">You can file for a restraining order or protection order in most countries. Contact a legal aid society or DV organization to understand your options.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUNTRY FILTER -->
+    <div class="section-tag">🌍 COUNTRY-WISE CONTACTS</div>
+    <h3 style="font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin-bottom:1.5rem; margin-top:1rem;">Emergency Numbers & DV Hotlines by Country</h3>
+
+    <div class="country-filter" id="regionFilter">
+      <button class="filter-btn active" data-region="all" onclick="filterRegion('all', this)">🌐 All Regions</button>
+      <button class="filter-btn" data-region="asia" onclick="filterRegion('asia', this)">🌏 Asia</button>
+      <button class="filter-btn" data-region="europe" onclick="filterRegion('europe', this)">🇪🇺 Europe</button>
+      <button class="filter-btn" data-region="americas" onclick="filterRegion('americas', this)">🌎 Americas</button>
+      <button class="filter-btn" data-region="africa" onclick="filterRegion('africa', this)">🌍 Africa</button>
+      <button class="filter-btn" data-region="oceania" onclick="filterRegion('oceania', this)">🌊 Oceania</button>
+    </div>
+
+    <div class="countries-grid" id="countriesGrid">
+
+      <!-- INDIA -->
+      <div class="country-card" data-region="asia">
+        <div class="country-header">
+          <div class="country-flag">🇮🇳</div>
+          <div>
+            <div class="country-name">India</div>
+            <div class="country-region">South Asia</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:100">100</a></span></div>
+          <div class="contact-row"><span class="contact-label">Ambulance</span><span class="contact-number"><a href="tel:102">102</a></span></div>
+          <div class="contact-row"><span class="contact-label">Women Helpline</span><span class="contact-number"><a href="tel:1091">1091</a></span></div>
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:112">112</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 DV Hotline</span>
+            <span class="hotline-number"><a href="tel:181">181</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- USA -->
+      <div class="country-card" data-region="americas">
+        <div class="country-header">
+          <div class="country-flag">🇺🇸</div>
+          <div>
+            <div class="country-name">United States</div>
+            <div class="country-region">North America</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:911">911</a></span></div>
+          <div class="contact-row"><span class="contact-label">Police (non-emrg)</span><span class="contact-number"><a href="tel:311">311</a></span></div>
+          <div class="contact-row"><span class="contact-label">Crisis Text</span><span class="contact-number">Text HOME to 741741</span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 NDVH Hotline</span>
+            <span class="hotline-number"><a href="tel:18007997233">1-800-799-7233</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UK -->
+      <div class="country-card" data-region="europe">
+        <div class="country-header">
+          <div class="country-flag">🇬🇧</div>
+          <div>
+            <div class="country-name">United Kingdom</div>
+            <div class="country-region">Western Europe</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:999">999</a></span></div>
+          <div class="contact-row"><span class="contact-label">Non-Emergency</span><span class="contact-number"><a href="tel:101">101</a></span></div>
+          <div class="contact-row"><span class="contact-label">Silent Emrg</span><span class="contact-number">999 + press 55</span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 National DV</span>
+            <span class="hotline-number"><a href="tel:08082000247">0808 2000 247</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUSTRALIA -->
+      <div class="country-card" data-region="oceania">
+        <div class="country-header">
+          <div class="country-flag">🇦🇺</div>
+          <div>
+            <div class="country-name">Australia</div>
+            <div class="country-region">Oceania</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:000">000</a></span></div>
+          <div class="contact-row"><span class="contact-label">Police Assist</span><span class="contact-number"><a href="tel:131444">131 444</a></span></div>
+          <div class="contact-row"><span class="contact-label">Lifeline</span><span class="contact-number"><a href="tel:131114">13 11 14</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 1800RESPECT</span>
+            <span class="hotline-number"><a href="tel:1800737732">1800 737 732</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANADA -->
+      <div class="country-card" data-region="americas">
+        <div class="country-header">
+          <div class="country-flag">🇨🇦</div>
+          <div>
+            <div class="country-name">Canada</div>
+            <div class="country-region">North America</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:911">911</a></span></div>
+          <div class="contact-row"><span class="contact-label">Crisis Line</span><span class="contact-number"><a href="tel:18334564566">1-833-456-4566</a></span></div>
+          <div class="contact-row"><span class="contact-label">Shelter Aid</span><span class="contact-number">ShelterSafe.ca</span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Assaulted Women</span>
+            <span class="hotline-number"><a href="tel:18663631136">1-866-863-0511</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GERMANY -->
+      <div class="country-card" data-region="europe">
+        <div class="country-header">
+          <div class="country-flag">🇩🇪</div>
+          <div>
+            <div class="country-name">Germany</div>
+            <div class="country-region">Central Europe</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:112">112</a></span></div>
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:110">110</a></span></div>
+          <div class="contact-row"><span class="contact-label">Victim Support</span><span class="contact-number"><a href="tel:116006">116 006</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Women's Helpline</span>
+            <span class="hotline-number"><a href="tel:08000116016">08000 116 016</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAKISTAN -->
+      <div class="country-card" data-region="asia">
+        <div class="country-header">
+          <div class="country-flag">🇵🇰</div>
+          <div>
+            <div class="country-name">Pakistan</div>
+            <div class="country-region">South Asia</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:15">15</a></span></div>
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:1122">1122</a></span></div>
+          <div class="contact-row"><span class="contact-label">Legal Aid</span><span class="contact-number"><a href="tel:1242">1242</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Women Helpline</span>
+            <span class="hotline-number"><a href="tel:1099">1099</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOUTH AFRICA -->
+      <div class="country-card" data-region="africa">
+        <div class="country-header">
+          <div class="country-flag">🇿🇦</div>
+          <div>
+            <div class="country-name">South Africa</div>
+            <div class="country-region">Southern Africa</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police (SAPS)</span><span class="contact-number"><a href="tel:10111">10111</a></span></div>
+          <div class="contact-row"><span class="contact-label">Ambulance</span><span class="contact-number"><a href="tel:10177">10177</a></span></div>
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:112">112</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Stop GBV Helpline</span>
+            <span class="hotline-number"><a href="tel:0800428428">0800 428 428</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRAZIL -->
+      <div class="country-card" data-region="americas">
+        <div class="country-header">
+          <div class="country-flag">🇧🇷</div>
+          <div>
+            <div class="country-name">Brazil</div>
+            <div class="country-region">South America</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:190">190</a></span></div>
+          <div class="contact-row"><span class="contact-label">Ambulance</span><span class="contact-number"><a href="tel:192">192</a></span></div>
+          <div class="contact-row"><span class="contact-label">Fire/Emergency</span><span class="contact-number"><a href="tel:193">193</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Central de Atend.</span>
+            <span class="hotline-number"><a href="tel:180">180</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KENYA -->
+      <div class="country-card" data-region="africa">
+        <div class="country-header">
+          <div class="country-flag">🇰🇪</div>
+          <div>
+            <div class="country-name">Kenya</div>
+            <div class="country-region">East Africa</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:999">999</a></span></div>
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:112">112</a></span></div>
+          <div class="contact-row"><span class="contact-label">Childline</span><span class="contact-number"><a href="tel:116">116</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 GBV Hotline</span>
+            <span class="hotline-number"><a href="tel:1195">1195</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- JAPAN -->
+      <div class="country-card" data-region="asia">
+        <div class="country-header">
+          <div class="country-flag">🇯🇵</div>
+          <div>
+            <div class="country-name">Japan</div>
+            <div class="country-region">East Asia</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:110">110</a></span></div>
+          <div class="contact-row"><span class="contact-label">Ambulance/Fire</span><span class="contact-number"><a href="tel:119">119</a></span></div>
+          <div class="contact-row"><span class="contact-label">Counseling</span><span class="contact-number"><a href="tel:0120279338">0120-279-338</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 DV Consultation</span>
+            <span class="hotline-number"><a href="tel:0120-DV-SOUDAN">0570-0-55210</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRANCE -->
+      <div class="country-card" data-region="europe">
+        <div class="country-header">
+          <div class="country-flag">🇫🇷</div>
+          <div>
+            <div class="country-name">France</div>
+            <div class="country-region">Western Europe</div>
+          </div>
+        </div>
+        <div class="country-body">
+          <div class="contact-row"><span class="contact-label">Emergency</span><span class="contact-number"><a href="tel:112">112</a></span></div>
+          <div class="contact-row"><span class="contact-label">Police</span><span class="contact-number"><a href="tel:17">17</a></span></div>
+          <div class="contact-row"><span class="contact-label">SAMU</span><span class="contact-number"><a href="tel:15">15</a></span></div>
+          <div class="contact-divider"></div>
+          <div class="country-hotline">
+            <span class="hotline-label">🆘 Violences Femmes</span>
+            <span class="hotline-number"><a href="tel:3919">3919</a></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+<section id="how-it-works">
+  <div class="container-wide">
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="section-tag">⚙️ HOW IT WORKS</div>
+        <h2 class="section-title">AI That <span>Truly Understands</span></h2>
+        <p class="section-sub">PROTEGO goes beyond keyword detection — it reads emotional context, understands urgency, and takes intelligent action.</p>
+
+        <div class="timeline" style="margin-top:3rem;">
+          <div class="timeline-item">
+            <div class="timeline-dot">1</div>
+            <div class="timeline-title">You Send a Message</div>
+            <div class="timeline-desc">Start chatting naturally. No need for special commands or keywords. Just tell PROTEGO what you're experiencing, however you feel comfortable.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">2</div>
+            <div class="timeline-title">NLP Risk Analysis</div>
+            <div class="timeline-desc">Our NLP engine processes emotional tone, detects distress signals, and classifies your message into risk levels: safe, elevated, high, or emergency.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">3</div>
+            <div class="timeline-title">Intelligent Response</div>
+            <div class="timeline-desc">PROTEGO responds with empathy calibrated to your risk level — providing support, guidance, or immediately surfacing emergency resources.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">4</div>
+            <div class="timeline-title">Emergency Escalation</div>
+            <div class="timeline-desc">If emergency signals are detected, immediate alerts are triggered with local emergency numbers and step-by-step crisis guidance.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">5</div>
+            <div class="timeline-title">All Interactions Logged Securely</div>
+            <div class="timeline-desc">With your consent, conversations are saved securely to Supabase — allowing counselors to review and follow up, if you choose to share.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7" style="padding-left:4rem; padding-top:2rem; display:flex; align-items:center;">
+        <div style="width:100%;">
+          <!-- Info cards -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">
+            <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.8rem;">
+              <div style="font-size:2rem; margin-bottom:0.8rem;">🔴</div>
+              <div style="font-family:var(--font-display); font-weight:700; margin-bottom:0.4rem; color:var(--crimson);">Emergency</div>
+              <div style="font-size:0.82rem; color:var(--muted); line-height:1.7;">Immediate danger detected. AI surfaces emergency numbers, triggers popup alert, and provides step-by-step escape guidance.</div>
+            </div>
+            <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.8rem;">
+              <div style="font-size:2rem; margin-bottom:0.8rem;">🟠</div>
+              <div style="font-family:var(--font-display); font-weight:700; margin-bottom:0.4rem; color:var(--gold);">High Risk</div>
+              <div style="font-size:0.82rem; color:var(--muted); line-height:1.7;">Elevated danger signals. Conversation styled with warning indicators, DV hotlines surfaced proactively.</div>
+            </div>
+            <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.8rem;">
+              <div style="font-size:2rem; margin-bottom:0.8rem;">🟡</div>
+              <div style="font-family:var(--font-display); font-weight:700; margin-bottom:0.4rem; color:var(--gold);">Moderate</div>
+              <div style="font-size:0.82rem; color:var(--muted); line-height:1.7;">Some distress detected. PROTEGO responds with heightened empathy and suggests professional support options.</div>
+            </div>
+            <div style="background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.8rem;">
+              <div style="font-size:2rem; margin-bottom:0.8rem;">🟢</div>
+              <div style="font-family:var(--font-display); font-weight:700; margin-bottom:0.4rem; color:var(--teal);">Safe</div>
+              <div style="font-size:0.82rem; color:var(--muted); line-height:1.7;">General support mode. Compassionate listening, information, and safety planning resources shared.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container-wide">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">🛡️ PROTEGO</div>
+        <div class="footer-brand-tagline">AI-powered protection and support for domestic violence survivors. Available 24/7, completely confidential.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#emergency">Emergency Help</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Emergency</div>
+        <ul class="footer-links">
+          <li><a href="tel:911">US: 911</a></li>
+          <li><a href="tel:999">UK: 999</a></li>
+          <li><a href="tel:112">EU: 112</a></li>
+          <li><a href="tel:100">India: 100</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">DV Hotlines</div>
+        <ul class="footer-links">
+          <li><a href="tel:18007997233">US: 1-800-799-7233</a></li>
+          <li><a href="tel:08082000247">UK: 0808 2000 247</a></li>
+          <li><a href="tel:181">India: 181</a></li>
+          <li><a href="tel:1800737732">AU: 1800 737 732</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 PROTEGO AI. Built to protect, support, and empower.</div>
+      <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+        <span class="footer-badge">🔒 Encrypted</span>
+        <span class="footer-badge">🛡️ Confidential</span>
+        <span class="footer-badge">🤝 Trauma-Informed AI</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- end page-wrapper -->
+
+<!-- FLOAT BUTTON -->
+<button class="float-chat-btn" onclick="scrollToChat()" title="Talk to PROTEGO AI">💬</button>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* ═══════════════ INIT ═══════════════ */
+const supabaseClient = supabase.createClient(
+  "https://wyaokrorqdnbcwkgjcho.supabase.co",
+  "sb_publishable_rdlUtCFXg5bMKQEmHuEPRw_5JBvWXQf"
+);
+
+const chatBody    = document.getElementById("chatBody");
+const userInput   = document.getElementById("userInput");
+const brandName   = document.getElementById("brand-name");
+
+/* ═══════════════ USER ═══════════════ */
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) {
+  window.location = "/login";
+} else {
+  brandName.innerText = user.name;
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location = "/login";
+}
+
+/* ═══════════════ SCROLL TO CHAT ═══════════════ */
+function scrollToChat() {
+  document.getElementById("hero").scrollIntoView({ behavior: "smooth" });
+  setTimeout(() => userInput.focus(), 600);
+}
+
+/* ═══════════════ FIX SPACING ═══════════════ */
+function fixSpacing(text) {
+  return text
+    .replace(/([.,!?])([A-Za-z])/g, "$1 $2")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\s+/g, " ")
+    .replace(/([.!?])\s*/g, "$1\n\n")
+    .trim();
+}
+
+/* ═══════════════ ADD MESSAGE ═══════════════ */
+function addMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.innerText = text;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+/* ═══════════════ TYPE MESSAGE ═══════════════ */
+function typeMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.style.whiteSpace = "pre-wrap";
+  chatBody.appendChild(div);
+  let i = 0;
+  const interval = setInterval(() => {
+    div.textContent += text[i];
+    i++;
+    chatBody.scrollTop = chatBody.scrollHeight;
+    if (i >= text.length) clearInterval(interval);
+  }, 15);
+}
+
+/* ═══════════════ EMERGENCY POPUP ═══════════════ */
+function showEmergencyPopup() {
+  const toast = document.createElement("div");
+  toast.className = "emergency-toast";
+  toast.innerHTML = `
+    <div class="toast-icon">🚨</div>
+    <div>
+      <div class="toast-title">EMERGENCY DETECTED</div>
+      <div class="toast-sub">Please call emergency services immediately. Your safety matters.</div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(50px)";
+    toast.style.transition = "all 0.4s ease";
+    setTimeout(() => toast.remove(), 400);
+  }, 5000);
+}
+
+/* ═══════════════ SEND MESSAGE ═══════════════ */
+async function sendMessage() {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  addMessage(text, "user-msg");
+  userInput.value = "";
+
+  const typing = document.createElement("div");
+  typing.innerText = "PROTEGO is thinking...";
+  typing.className = "message bot-msg";
+  typing.id = "typing";
+  chatBody.appendChild(typing);
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, country: "India" })
+    });
+
+    const data = await res.json();
+    document.getElementById("typing")?.remove();
+
+    const formattedReply = fixSpacing(data.reply || "I'm here for you 🤍");
+    typeMessage(
+      formattedReply,
+      (data.risk_level === "high" || data.risk_level === "emergency")
+        ? "bot-msg emergency"
+        : "bot-msg"
+    );
+
+    if (data.risk_level === "emergency") showEmergencyPopup();
+
+    try {
+      await supabaseClient.from("chats").insert([{
+        user_id: user.id,
+        message: text,
+        response: data.reply,
+        risk: data.risk_level
+      }]);
+    } catch (e) { console.log("DB error:", e); }
+
+  } catch (err) {
+    console.log("ERROR:", err);
+    document.getElementById("typing")?.remove();
+    addMessage("Server error ⚠️ Please try again.", "bot-msg");
+  }
+}
+
+/* ═══════════════ MOBILE SEND ═══════════════ */
+async function sendMessageMobile() {
+  const inputEl = document.getElementById("userInputMobile");
+  const bodyEl  = document.getElementById("chatBodyMobile");
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  // user message
+  const uDiv = document.createElement("div");
+  uDiv.className = "message user-msg";
+  uDiv.innerText = text;
+  bodyEl.appendChild(uDiv);
+  inputEl.value = "";
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+
+  // typing
+  const typing = document.createElement("div");
+  typing.className = "message bot-msg";
+  typing.id = "typingMobile";
+  typing.innerText = "PROTEGO is thinking...";
+  bodyEl.appendChild(typing);
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, country: "India" })
+    });
+    const data = await res.json();
+    document.getElementById("typingMobile")?.remove();
+
+    const formattedReply = fixSpacing(data.reply || "I'm here for you 🤍");
+    const bDiv = document.createElement("div");
+    bDiv.className = "message " + ((data.risk_level === "high" || data.risk_level === "emergency") ? "bot-msg emergency" : "bot-msg");
+    bDiv.style.whiteSpace = "pre-wrap";
+    bodyEl.appendChild(bDiv);
+    let i = 0;
+    const iv = setInterval(() => {
+      bDiv.textContent += formattedReply[i]; i++;
+      bodyEl.scrollTop = bodyEl.scrollHeight;
+      if (i >= formattedReply.length) clearInterval(iv);
+    }, 15);
+
+    if (data.risk_level === "emergency") showEmergencyPopup();
+  } catch (err) {
+    document.getElementById("typingMobile")?.remove();
+    const eDiv = document.createElement("div");
+    eDiv.className = "message bot-msg";
+    eDiv.innerText = "Server error ⚠️";
+    bodyEl.appendChild(eDiv);
+  }
+}
+
+/* ═══════════════ ENTER KEY ═══════════════ */
+userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+document.getElementById("userInputMobile").addEventListener("keypress", e => { if (e.key === "Enter") sendMessageMobile(); });
+
+/* ═══════════════ REGION FILTER ═══════════════ */
+function filterRegion(region, btn) {
+  // update active button
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  // show/hide cards
+  document.querySelectorAll(".country-card").forEach(card => {
+    if (region === "all" || card.dataset.region === region) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+/* ═══════════════ INTERSECTION OBSERVER ANIMATIONS ═══════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = "1";
+      entry.target.style.transform = "translateY(0)";
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll(".feature-card, .country-card, .step-card, .timeline-item").forEach(el => {
+  el.style.opacity = "0";
+  el.style.transform = "translateY(20px)";
+  el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
